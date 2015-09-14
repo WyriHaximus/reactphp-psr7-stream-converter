@@ -9,10 +9,10 @@ cs: init
 	./vendor/bin/phpcs --standard=PSR2 src/
 
 unit: init
-	./vendor/bin/phpunit --coverage-text --coverage-html covHtml
+	./vendor/bin/phpunit --debug --coverage-text --coverage-html covHtml
 
 unit-travis: init
-	./vendor/bin/phpunit --coverage-text --coverage-clover ./build/logs/clover.xml
+	./vendor/bin/phpunit --debug --coverage-text --coverage-clover ./build/logs/clover.xml
 
 dunit: init
 	./vendor/bin/dunit
