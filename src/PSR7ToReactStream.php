@@ -32,7 +32,7 @@ class PSR7ToReactStream extends EventEmitter implements ReadableStreamInterface,
         $this->loop = $loop;
         $this->psr7Stream = $psr7Stream;
 
-        $this->loop->addTimer(0.001, array($this, 'tick'));
+        $this->queueTick();
     }
 
     public function tick()
@@ -43,11 +43,21 @@ class PSR7ToReactStream extends EventEmitter implements ReadableStreamInterface,
         } while ($data !== '');
 
         if (!$this->psr7Stream->eof()) {
-            $this->loop->addTimer(0.001, array($this, 'tick'));
+            $this->queueTick();
             return;
         }
 
         $this->close();
+    }
+
+    protected function queueTick()
+    {
+        if (method_exists($this->loop, 'futureTick')) {
+            $this->loop->futureTick(array($this, 'tick'));
+            return;
+        }
+
+        $this->loop->addTimer(0.001, array($this, 'tick'));
     }
 
     public function isReadable()
