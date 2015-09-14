@@ -10,7 +10,6 @@ class PSR7ToReactStreamTest extends \PHPUnit_Framework_TestCase
 {
     public function testBasic()
     {
-        $self = $this;
         $dataChunks = array(
             'foo',
             '',
@@ -29,20 +28,20 @@ class PSR7ToReactStreamTest extends \PHPUnit_Framework_TestCase
         $converter = new PSR7ToReactStream($loop, $psr7Stream);
         $callableData = false;
         $i = 0;
-        $converter->on('data', function ($data, $stream) use (&$callableData, &$i, $dataChunks, $self) {
-            $self->assertEquals($dataChunks[$i++], $data);
-            $self->assertInstanceOf('WyriHaximus\React\PSR7StreamConverter\PSR7ToReactStream', $stream);
+        $converter->on('data', function ($data, $stream) use (&$callableData, &$i, $dataChunks) {
+            $this->assertEquals($dataChunks[$i++], $data);
+            $this->assertInstanceOf('WyriHaximus\React\PSR7StreamConverter\PSR7ToReactStream', $stream);
             $stream->write($data);
             $callableData = true;
         });
         $callableEnd = false;
-        $converter->on('end', function ($stream) use (&$callableEnd, $self) {
-            $self->assertInstanceOf('WyriHaximus\React\PSR7StreamConverter\PSR7ToReactStream', $stream);
+        $converter->on('end', function ($stream) use (&$callableEnd) {
+            $this->assertInstanceOf('WyriHaximus\React\PSR7StreamConverter\PSR7ToReactStream', $stream);
             $callableEnd = true;
         });
         $callableClose = false;
-        $converter->on('close', function ($stream) use (&$callableClose, $self) {
-            $self->assertInstanceOf('WyriHaximus\React\PSR7StreamConverter\PSR7ToReactStream', $stream);
+        $converter->on('close', function ($stream) use (&$callableClose) {
+            $this->assertInstanceOf('WyriHaximus\React\PSR7StreamConverter\PSR7ToReactStream', $stream);
             $callableClose = true;
         });
 

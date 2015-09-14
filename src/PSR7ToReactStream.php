@@ -2,7 +2,6 @@
 
 namespace WyriHaximus\React\PSR7StreamConverter;
 
-use Evenement\EventEmitter;
 use Evenement\EventEmitterTrait;
 use Psr\Http\Message\StreamInterface;
 use React\EventLoop\LoopInterface;
@@ -10,8 +9,10 @@ use React\Stream\ReadableStreamInterface;
 use React\Stream\Util;
 use React\Stream\WritableStreamInterface;
 
-class PSR7ToReactStream extends EventEmitter implements ReadableStreamInterface, WritableStreamInterface
+class PSR7ToReactStream implements ReadableStreamInterface, WritableStreamInterface
 {
+    use EventEmitterTrait;
+
     /**
      * @var LoopInterface
      */
@@ -39,7 +40,7 @@ class PSR7ToReactStream extends EventEmitter implements ReadableStreamInterface,
     {
         do {
             $data = $this->psr7Stream->read(1024);
-            $this->emit('data', array($data, $this));
+            $this->emit('data', [$data, $this]);
         } while ($data !== '');
 
         if (!$this->psr7Stream->eof()) {
@@ -52,12 +53,7 @@ class PSR7ToReactStream extends EventEmitter implements ReadableStreamInterface,
 
     protected function queueTick()
     {
-        if (method_exists($this->loop, 'futureTick')) {
-            $this->loop->futureTick(array($this, 'tick'));
-            return;
-        }
-
-        $this->loop->addTimer(0.001, array($this, 'tick'));
+        $this->loop->futureTick([$this, 'tick']);
     }
 
     public function isReadable()
@@ -75,7 +71,7 @@ class PSR7ToReactStream extends EventEmitter implements ReadableStreamInterface,
         // TODO: Implement resume() method.
     }
 
-    public function pipe(WritableStreamInterface $dest, array $options = array())
+    public function pipe(WritableStreamInterface $dest, array $options = [])
     {
         Util::pipe($this, $dest, $options);
     }
@@ -83,8 +79,8 @@ class PSR7ToReactStream extends EventEmitter implements ReadableStreamInterface,
     public function close()
     {
         $this->closed = true;
-        $this->emit('end', array($this));
-        $this->emit('close', array($this));
+        $this->emit('end', [$this]);
+        $this->emit('close', [$this]);
     }
 
     public function isWritable()
