@@ -7,6 +7,12 @@ cache:
     - vendor
     - $HOME/.composer/cache
 
+# Addons
+addons:
+  apt:
+    packages:
+    - libevent-dev
+
 ## PHP versions we test against
 php:
   - 5.4
@@ -38,6 +44,9 @@ matrix:
       env: dependencies=highest
     - php: hhvm
       env: dependencies=highest
+
+## Loops installer
+install: ./travis-event-loops.sh
 
 ## Update composer and run the appropriate composer command
 before_script:

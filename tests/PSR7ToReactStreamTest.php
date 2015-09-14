@@ -3,20 +3,23 @@
 namespace WyriHaximus\React\Tests\PSR7StreamConverter;
 
 use Phake;
-use React\EventLoop\Factory;
+use React\EventLoop\LoopInterface;
 use WyriHaximus\React\PSR7StreamConverter\PSR7ToReactStream;
 
 class PSR7ToReactStreamTest extends \PHPUnit_Framework_TestCase
 {
-    public function testBasic()
+    /**
+     * @param LoopInterface $loop
+     * @dataProvider WyriHaximus\React\Tests\PSR7StreamConverter\EventLoopProvider::getLoops
+     */
+    public function testBasic(LoopInterface $loop)
     {
-        $dataChunks = array(
+        $dataChunks = [
             'foo',
             '',
             'bar',
             '',
-        );
-        $loop = Factory::create();
+        ];
         $psr7Stream = Phake::mock('Psr\Http\Message\StreamInterface');
 
         $psr7StreamRead = Phake::when($psr7Stream)->read(1024);
