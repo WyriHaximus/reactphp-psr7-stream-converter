@@ -20,6 +20,7 @@ class EventLoopProvider
         if (function_exists('event_base_new')) {
             $loops[] = [new LibEventLoop()];
         }
+
         if (class_exists('libev\EventLoop')) {
             $loops[] = [new LibEvLoop()];
         }
