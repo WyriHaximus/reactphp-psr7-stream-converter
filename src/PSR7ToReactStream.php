@@ -23,6 +23,11 @@ class PSR7ToReactStream implements ReadableStreamInterface, WritableStreamInterf
      */
     protected $psr7Stream;
 
+    /**
+     * @var bool
+     */
+    protected $closed = false;
+
     public function __construct(LoopInterface $loop, StreamInterface $psr7Stream)
     {
         $this->loop = $loop;
@@ -48,7 +53,7 @@ class PSR7ToReactStream implements ReadableStreamInterface, WritableStreamInterf
 
     public function isReadable()
     {
-        // TODO: Implement isReadable() method.
+        return !$this->closed;
     }
 
     public function pause()
@@ -68,13 +73,14 @@ class PSR7ToReactStream implements ReadableStreamInterface, WritableStreamInterf
 
     public function close()
     {
+        $this->closed = true;
         $this->emit('end', [$this]);
         $this->emit('close', [$this]);
     }
 
     public function isWritable()
     {
-        // TODO: Implement isWritable() method.
+        return !$this->closed;
     }
 
     public function write($data)
