@@ -3,7 +3,8 @@ set -e
 set -o pipefail
 
 if [[ "$TRAVIS_PHP_VERSION" != "hhvm" &&
-      "$TRAVIS_PHP_VERSION" != "hhvm-nightly" ]]; then
+      "$TRAVIS_PHP_VERSION" != "hhvm-nightly" &&
+      "$TRAVIS_PHP_VERSION" != "7" ]]; then
 
     # install 'event' PHP extension
     echo "yes" | pecl install event
