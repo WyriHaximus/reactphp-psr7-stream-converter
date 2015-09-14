@@ -29,6 +29,8 @@ class PSR7ToReactStreamTest extends \PHPUnit_Framework_TestCase
         }
         Phake::when($psr7Stream)->eof()->thenReturn(false)->thenReturn(true);
         $converter = new PSR7ToReactStream($loop, $psr7Stream);
+        $this->assertTrue($converter->isReadable());
+        $this->assertTrue($converter->isWritable());
         $callableData = false;
         $i = 0;
         $converter->on('data', function ($data, $stream) use (&$callableData, &$i, $dataChunks) {
@@ -55,6 +57,8 @@ class PSR7ToReactStreamTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($callableData);
         $this->assertTrue($callableEnd);
         $this->assertTrue($callableClose);
+        $this->assertFalse($converter->isReadable());
+        $this->assertFalse($converter->isWritable());
         Phake::inOrder
         (
             Phake::verify($psr7Stream)->write($dataChunks[0]),
